@@ -19,14 +19,17 @@ def image_detect(data):
     rospy.Subscriber("bridge/original_image", Image, image_detect, queue_size=1)
     bridge_op = CvBridge()
     image = bridge_op.imgmsg_to_cv2(data, "bgr8")
+    results = model.predict(source=image, show=True)
 
-    results = model.predict(source = image, show =True)
-    cv2.imwrite(IMAGE_DIR, results)
-
+    if os.path.exists(IMAGE_DIR):
+        breakpoint
+    else:
+         cv2.imwrite(IMAGE_DIR, results[0])
+   
 if __name__ == '__main__':
     try:
         rospy.init_node('object_detect_node', anonymous=True)
-        object_detect = rospy.Subscriber('/objetc_detect', Empty, image_detect)
+        object_detect = rospy.Subscriber('/object_detect', Empty, image_detect)
         
         while not rospy.is_shutdown():
             pass

@@ -39,7 +39,7 @@ def image_detect(req):
 
     #Identificação 
     rospy.loginfo("locating objects")
-    results = model.predict(IMAGE_DIR)
+    results = model.predict(IMAGE_DIR, save = True, save_txt= True)
     rospy.loginfo("Object located")
     result = results[0]
     num_boxes = len(result.boxes)

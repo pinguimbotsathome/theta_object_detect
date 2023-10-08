@@ -27,15 +27,13 @@ def image_detect(req):
     #            cv2.imwrite(IMAGE_DIR, image)
 
     #foto com a webcam
-    webcam = cv2.VideoCapture(2) #theta usar VideoCapture(1)
+    webcam = cv2.VideoCapture(0) #theta usar VideoCapture(1)
     if webcam.isOpened():
         validacao, frame = webcam.read()
         while validacao:
             validacao, frame = webcam.read()
-            if os.path.exists(IMAGE_DIR):
-                breakpoint
-            else:
-                cv2.imwrite(IMAGE_DIR, frame)
+            cv2.imwrite(IMAGE_DIR, frame)
+            validacao = 0
 
     #Identificação 
     rospy.loginfo("locating objects")

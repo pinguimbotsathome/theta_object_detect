@@ -64,11 +64,11 @@ def image_detect(req):
             rospy.loginfo("Class: Snacks")
         rospy.loginfo("---")
 
+
 if __name__ == '__main__':
     try:
         rospy.init_node('object_detect_node', anonymous=True)
-        object_detect = rospy.Subscriber('/object_detect', Empty, image_detect)
-        
+        object_recognition_node = rospy.Subscriber('/object_detect', Empty, image_detect)
         while not rospy.is_shutdown():
             pass
     except rospy.ROSInterruptException:

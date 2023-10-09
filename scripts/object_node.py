@@ -47,35 +47,33 @@ def image_detect(req):
     num_boxes = len(result.boxes)
     box = result.boxes[0]
 
-    list_objects=None
-
     rospy.loginfo("Number of objects: %d", num_boxes)
     for box in result.boxes:
-        class_id = result.names[box.cls[0].item()]
+        name_id = result.names[box.cls[0].item()]
         cords = box.xyxy[0].tolist()
         cords = [round(x) for x in cords]
-        rospy.loginfo("Object type: %s", class_id)
+        rospy.loginfo("Object type: %s", name_id)
 
-        if(class_id=='Nescau' or class_id=='Kuat' or class_id=='Coconut Water' or class_id=='Fanta'):
-            list_objects = "Drinks"
+        if(name_id =='Nescau' or name_id =='Kuat' or name_id =='Coconut Water' or name_id =='Fanta'):
+            class_id = "Drinks"
             rospy.loginfo("Class: Drinks")
-        if(class_id=='Detergent' or class_id=='Sponge' or class_id=='Cloth'):
-            list_objects = "Cleaning supplies"
+        if(name_id =='Detergent' or name_id =='Sponge' or name_id =='Cloth'):
+            class_id = "Cleaning supplies"
             rospy.loginfo("Class: Cleaning supplies")
-        if(class_id=='Gelatin' or class_id=='Mustard' or class_id=='Shoyo' or class_id=='Sauce' or class_id=='Tea'):
-            list_objects = "Pantry items"
+        if(name_id =='Gelatin' or name_id =='Mustard' or name_id =='Shoyo' or name_id =='Sauce' or name_id =='Tea'):
+            class_id = "Pantry items"
             rospy.loginfo("Class: Pantry items")
-        if(class_id=='Apple' or class_id=='Pear' or class_id=='Tangerine'):
-            list_objects = "Fruits"
+        if(name_id =='Apple' or name_id =='Pear' or name_id =='Tangerine'):
+            class_id = "Fruits"
             rospy.loginfo("Class: Fruits")
-        if(class_id=='Treloso' or class_id=='Chocolate' or class_id=='Peanut'):
-            list_objects = "Snacks"
+        if(name_id =='Treloso' or name_id =='Chocolate' or name_id =='Peanut'):
+            class_id = "Snacks"
             rospy.loginfo("Class: Snacks")
         rospy.loginfo("---")
  
-        list_objects = f"{class_id}" # : {list_objects}"
-
-    return ObjectDetectResponse(n_objects=num_boxes, object_list=list_objects)
+        list_object = f"object:{list_object}, class:{class_id}"
+        
+    return ObjectDetectResponse(n_objects=num_boxes, object_list=list_object)
 
 if __name__ == '__main__':
     try:

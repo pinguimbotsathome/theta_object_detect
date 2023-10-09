@@ -7,11 +7,13 @@ from std_msgs.msg import Empty
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from ultralytics import YOLO
+from theta_object_detect.srv import ObjectDetect, ObjectDetectResponse
+import time
 
 PACK_DIR = rospkg.RosPack().get_path("theta_object_detect")
 IMAGE_DIR = os.path.join(PACK_DIR, "resource/object.png")
-
-model = YOLO('/home/dallagnol/work_ws/src/theta_object_detect/last.pt') 
+MODEL_DIR = os.path.join(PACK_DIR, "last.pt")
+model = YOLO(MODEL_DIR, task='detect') 
 
 bridge = CvBridge()
 
@@ -26,22 +28,26 @@ def image_detect(req):
     #        else:
     #            cv2.imwrite(IMAGE_DIR, image)
 
-    #foto com a webcam
-    webcam = cv2.VideoCapture(0) #theta usar VideoCapture(1)
-    if webcam.isOpened():
-        validacao, frame = webcam.read()
-        while validacao:
-            validacao, frame = webcam.read()
-            cv2.imwrite(IMAGE_DIR, frame)
-            validacao = 0
+    # #foto com a webcam
+    # webcam = cv2.VideoCapture(0) #theta usar VideoCapture(1)
+    # if webcam.isOpened():
+    #     validacao, frame = webcam.read()
+    #     # while validacao:
+    #     #     validacao, frame = webcam.read()
+    #     cv2.imwrite(IMAGE_DIR, frame)
+    #         # validacao = 0
 
+
+    # time.sleep(3)
     #Identificação 
     rospy.loginfo("locating objects")
-    results = model.predict(IMAGE_DIR, save = True, save_txt= True)
+    results = model.predict(source=IMAGE_DIR, save = True)
     rospy.loginfo("Object located")
     result = results[0]
     num_boxes = len(result.boxes)
     box = result.boxes[0]
+
+    list_objects=None
 
     rospy.loginfo("Number of objects: %d", num_boxes)
     for box in result.boxes:
@@ -51,22 +57,31 @@ def image_detect(req):
         rospy.loginfo("Object type: %s", class_id)
 
         if(class_id=='Nescau' or class_id=='Kuat' or class_id=='Coconut Water' or class_id=='Fanta'):
+            list_objects = "Drinks"
             rospy.loginfo("Class: Drinks")
         if(class_id=='Detergent' or class_id=='Sponge' or class_id=='Cloth'):
+            list_objects = "Cleaning supplies"
             rospy.loginfo("Class: Cleaning supplies")
         if(class_id=='Gelatin' or class_id=='Mustard' or class_id=='Shoyo' or class_id=='Sauce' or class_id=='Tea'):
+            list_objects = "Pantry items"
             rospy.loginfo("Class: Pantry items")
         if(class_id=='Apple' or class_id=='Pear' or class_id=='Tangerine'):
+            list_objects = "Fruits"
             rospy.loginfo("Class: Fruits")
         if(class_id=='Treloso' or class_id=='Chocolate' or class_id=='Peanut'):
+            list_objects = "Snacks"
             rospy.loginfo("Class: Snacks")
         rospy.loginfo("---")
+ 
+        list_objects = f"{class_id}" # : {list_objects}"
 
+    return ObjectDetectResponse(n_objects=num_boxes, object_list=list_objects)
 
 if __name__ == '__main__':
     try:
         rospy.init_node('object_detect_node', anonymous=True)
         object_recognition_node = rospy.Subscriber('/object_detect', Empty, image_detect)
+        rospy.Service("services/objectDetection", ObjectDetect , image_detect)
         while not rospy.is_shutdown():
             pass
     except rospy.ROSInterruptException:

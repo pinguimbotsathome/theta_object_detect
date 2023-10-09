@@ -153,17 +153,17 @@ include_directories(
 # )
 
 #############
-## Install ##
+## Install ##x
 #############
 
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
 ## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
+## in contrast to setup.py, you can ch  oose the destination
 # catkin_install_python(PROGRAMS
 catkin_install_python(PROGRAMS
-  scripts/object.py
+  src/object_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 ## Mark executables for installation

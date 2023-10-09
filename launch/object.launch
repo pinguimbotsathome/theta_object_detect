@@ -1,0 +1,3 @@
+<launch>
+    <node name="object" pkg="theta_object_detect" type="object_node.py" />
+</launch>
